@@ -22,6 +22,7 @@ export function renderLeaderboard(
 
   const top = sortBy(services.filter((s) => getter(s) !== null), getter, 'desc').slice(0, 25);
   const bottom = sortBy(services.filter((s) => getter(s) !== null), getter, 'asc').slice(0, 25);
+  const metricLabel = METRICS.find((m) => m.key === metric)?.label || metric;
 
   root.innerHTML = `
     <h1 class="view-title">Leaderboards</h1>
@@ -35,12 +36,12 @@ export function renderLeaderboard(
     </div>
     <div class="leaderboard-grid">
       <div class="leaderboard-section panel">
-        <h3>Top 25 — Highest ${escapeHtml(METRICS.find((m) => m.key === metric)?.label || metric)}</h3>
-        ${renderRows(top, getter)}
+        <h3>Top 25 — Highest ${escapeHtml(metricLabel)}</h3>
+        ${renderRows(top, getter, metricLabel)}
       </div>
       <div class="leaderboard-section panel">
-        <h3>Bottom 25 — Lowest ${escapeHtml(METRICS.find((m) => m.key === metric)?.label || metric)}</h3>
-        ${renderRows(bottom, getter)}
+        <h3>Bottom 25 — Lowest ${escapeHtml(metricLabel)}</h3>
+        ${renderRows(bottom, getter, metricLabel)}
       </div>
     </div>
   `;
@@ -53,19 +54,23 @@ export function renderLeaderboard(
   });
 }
 
-function renderRows(services: Service[], getter: (s: Service) => number | null): string {
+function renderRows(services: Service[], getter: (s: Service) => number | null, metricLabel: string): string {
   return services
     .map(
-      (s, i) => `
+      (s, i) => {
+        const v = getter(s);
+        const tip = escapeHtml(`${s.name} — ${metricLabel}: ${v ?? '—'}★ (${s.suburb}, ${s.state})`);
+        return `
       <div class="leader-row">
         <span class="leader-rank">${i + 1}</span>
         <div>
-          <span class="leader-name" data-slug="${escapeHtml(s.slug)}">${escapeHtml(s.name)}</span>
+          <span class="leader-name" data-slug="${escapeHtml(s.slug)}" data-tip="${escapeHtml(`${s.name} — click for full detail`)}">${escapeHtml(s.name)}</span>
           <div class="leader-sub">${escapeHtml(s.suburb)}, ${escapeHtml(s.state)} · ${escapeHtml(s.provider)}</div>
         </div>
-        <span class="rating" data-r="${getter(s) ?? 0}">${getter(s) ?? '–'}</span>
+        <span class="rating" data-r="${v ?? 0}" data-tip="${tip}" aria-label="${tip}">${v ?? '–'}</span>
       </div>
-    `,
+    `;
+      },
     )
     .join('');
 }

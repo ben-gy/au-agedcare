@@ -64,13 +64,13 @@ export function renderDirectory(
               .map(
                 (s) => `
               <tr>
-                <td><span class="service-link" data-slug="${escapeHtml(s.slug)}">${escapeHtml(s.name)}</span><br><span class="muted">${escapeHtml(s.provider)} · ${escapeHtml(s.size)} · ${escapeHtml(s.purpose)}</span></td>
+                <td><span class="service-link" data-slug="${escapeHtml(s.slug)}" data-tip="${escapeHtml(`${s.name} — click for full detail`)}">${escapeHtml(s.name)}</span><br><span class="muted">${escapeHtml(s.provider)} · ${escapeHtml(s.size)} · ${escapeHtml(s.purpose)}</span></td>
                 <td>${escapeHtml(s.state)} · ${escapeHtml(s.suburb)}</td>
-                ${ratingCell(s.overall)}
-                ${ratingCell(s.residents_exp)}
-                ${ratingCell(s.compliance)}
-                ${ratingCell(s.staffing)}
-                ${ratingCell(s.quality_measures)}
+                ${ratingCell(s.overall, s.name, 'Overall')}
+                ${ratingCell(s.residents_exp, s.name, "Residents' Experience")}
+                ${ratingCell(s.compliance, s.name, 'Compliance')}
+                ${ratingCell(s.staffing, s.name, 'Staffing')}
+                ${ratingCell(s.quality_measures, s.name, 'Quality Measures')}
               </tr>
             `,
               )
@@ -97,7 +97,11 @@ export function renderDirectory(
   });
 }
 
-function ratingCell(r: number | null): string {
-  if (r === null) return `<td class="numeric muted">–</td>`;
-  return `<td class="numeric"><span class="rating" data-r="${r}">${r}</span></td>`;
+function ratingCell(r: number | null, name: string, dimension: string): string {
+  if (r === null) {
+    const tip = escapeHtml(`${name} — ${dimension}: no rating published`);
+    return `<td class="numeric muted" data-tip="${tip}">–</td>`;
+  }
+  const tip = escapeHtml(`${name} — ${dimension}: ${r}★`);
+  return `<td class="numeric" data-tip="${tip}"><span class="rating" data-r="${r}" aria-label="${tip}">${r}</span></td>`;
 }

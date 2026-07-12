@@ -76,6 +76,10 @@ function paintMarkers(state: AppState, onOpenService: (slug: string) => void) {
       fillColor: colour,
       fillOpacity: 0.85,
     });
+    marker.bindTooltip(
+      `${escapeHtml(s.name)} — Overall ${s.overall ?? '—'}★ · ${escapeHtml(s.suburb)}, ${escapeHtml(s.state)}`,
+      { direction: 'top', opacity: 0.95 },
+    );
     marker.bindPopup(
       `<strong style="color:#0f3859">${escapeHtml(s.name)}</strong><br>
        <span style="color:#466069">${escapeHtml(s.provider)}</span><br>

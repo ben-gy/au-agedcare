@@ -76,7 +76,8 @@ export function renderCareMinutes(
             const cx = sx(s.s.total_target!);
             const cy = sy(s.s.total_actual!);
             const fill = ratingColor(s.staffing);
-            return `<circle class="scatter-dot" cx="${cx}" cy="${cy}" r="3.5" fill="${fill}" fill-opacity="0.7" stroke="#fff" stroke-width="0.5" data-slug="${escapeHtml(s.slug)}"><title>${escapeHtml(s.name)} — target ${s.s.total_target}, actual ${s.s.total_actual} (${escapeHtml(s.state)})</title></circle>`;
+            const tip = escapeHtml(`${s.name} — target ${s.s.total_target}, actual ${s.s.total_actual} min/day (${s.state}) · Staffing ${s.staffing ?? '—'}★`);
+            return `<circle class="scatter-dot" cx="${cx}" cy="${cy}" r="3.5" fill="${fill}" fill-opacity="0.7" stroke="#fff" stroke-width="0.5" data-slug="${escapeHtml(s.slug)}" data-tip="${tip}" aria-label="${tip}"/>`;
           })
           .join('')}
       </svg>

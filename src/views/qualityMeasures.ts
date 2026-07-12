@@ -61,14 +61,19 @@ export function renderQualityMeasures(
           ${rows
             .map(
               (s) => `
-            <div class="qm-cell qm-name" data-slug="${escapeHtml(s.slug)}">
+            <div class="qm-cell qm-name" data-slug="${escapeHtml(s.slug)}" data-tip="${escapeHtml(`${s.name} — Quality Measures rating ${s.quality_measures ?? '—'}★. Click for full detail.`)}">
               ${escapeHtml(s.name)}
               <div class="muted" style="font-size: var(--font-size-xs); font-weight: 400;">${escapeHtml(s.suburb)}, ${escapeHtml(s.state)}</div>
             </div>
             ${MEASURES.map((m) => {
               const v = s.qm[m.key];
-              const bg = intensity(v, median[m.key] ?? null, stddev[m.key] ?? null);
-              return `<div class="qm-cell qm-value" style="background:${bg}">${formatPercent(v, 1)}</div>`;
+              const med = median[m.key] ?? null;
+              const bg = intensity(v, med, stddev[m.key] ?? null);
+              const tip =
+                v === null
+                  ? `${s.name} — ${m.label}: no data`
+                  : `${s.name} — ${m.label}: ${formatPercent(v, 1)} (national median ${formatPercent(med, 1)})`;
+              return `<div class="qm-cell qm-value" style="background:${bg}" data-tip="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}">${formatPercent(v, 1)}</div>`;
             }).join('')}
           `,
             )

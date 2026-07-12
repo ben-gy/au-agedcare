@@ -59,16 +59,16 @@ export function renderProviders(
       ${top
         .map(
           (p) => `
-        <div class="matrix-cell name" data-provider="${escapeHtml(p.name)}">
+        <div class="matrix-cell name" data-provider="${escapeHtml(p.name)}" data-tip="${escapeHtml(`${p.name} — ${p.count} services (${p.states || '—'}). Click to see all its services.`)}">
           ${escapeHtml(p.name)}
           <div class="matrix-meta">${escapeHtml(p.states || '—')}</div>
         </div>
-        <div class="matrix-cell">${p.count}</div>
-        ${matrixCell(p.avg_overall)}
-        ${matrixCell(p.avg_re)}
-        ${matrixCell(p.avg_compliance)}
-        ${matrixCell(p.avg_staffing)}
-        ${matrixCell(p.avg_quality)}
+        <div class="matrix-cell" data-tip="${escapeHtml(`${p.name} — ${p.count} services in the current filter`)}">${p.count}</div>
+        ${matrixCell(p.avg_overall, p.name, 'Overall')}
+        ${matrixCell(p.avg_re, p.name, "Residents' Experience")}
+        ${matrixCell(p.avg_compliance, p.name, 'Compliance')}
+        ${matrixCell(p.avg_staffing, p.name, 'Staffing')}
+        ${matrixCell(p.avg_quality, p.name, 'Quality Measures')}
       `,
         )
         .join('')}
@@ -83,8 +83,12 @@ export function renderProviders(
   });
 }
 
-function matrixCell(v: number | null): string {
+function matrixCell(v: number | null, provider: string, dimension: string): string {
   const cls = ratingClass(v);
-  if (v === null) return `<div class="matrix-cell"><span class="rating" data-r="0">–</span></div>`;
-  return `<div class="matrix-cell"><span class="rating" data-r="${cls}">${formatRating(v)}</span></div>`;
+  if (v === null) {
+    const tip = escapeHtml(`${provider} — ${dimension}: no rating published`);
+    return `<div class="matrix-cell" data-tip="${tip}"><span class="rating" data-r="0" aria-label="${tip}">–</span></div>`;
+  }
+  const tip = escapeHtml(`${provider} — avg ${dimension}: ${formatRating(v)}★ across its services`);
+  return `<div class="matrix-cell" data-tip="${tip}"><span class="rating" data-r="${cls}" aria-label="${tip}">${formatRating(v)}</span></div>`;
 }

@@ -1109,6 +1109,26 @@ select {
   font-size: var(--font-size-xs);
 }
 
+/* === Global hover tooltip ([data-tip]) === */
+.hover-tip {
+  position: fixed;
+  z-index: 2000; /* above Leaflet panes/controls (≤1000) and the detail panel */
+  max-width: 300px;
+  background: #0a1f2c;
+  color: #ffffff;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 100ms;
+}
+.hover-tip.visible {
+  opacity: 1;
+}
+
 /* === About modal === */
 .modal-overlay {
   position: fixed;

@@ -140,11 +140,12 @@ export function renderDetailPanel(state: AppState, service: Service): string {
 
 function ratingTile(label: string, v: number | null, gloss?: string): string {
   const r = v ?? 0;
+  const tip = escapeHtml(v === null ? `${label}: no rating published` : `${label}: ${v} out of 5 stars`);
   return `
     <div class="detail-rating">
       <div class="label">${gloss ? glossaryLink(gloss, label) : escapeHtml(label)}</div>
-      <div class="value" style="color: var(--rating-${r})">${v ?? '—'}</div>
-      <div class="stars">${formatStars(v)}</div>
+      <div class="value" style="color: var(--rating-${r})" data-tip="${tip}">${v ?? '—'}</div>
+      <div class="stars" data-tip="${tip}" aria-label="${tip}">${formatStars(v)}</div>
     </div>`;
 }
 
@@ -152,6 +153,7 @@ function reBar(label: string, d: ResidentExpDist): string {
   const total = (d.always ?? 0) + (d.most ?? 0) + (d.some ?? 0) + (d.never ?? 0);
   const seg = (v: number | null) => (total ? ((v ?? 0) / total) * 100 : 0);
   const positive = ((d.always ?? 0) + (d.most ?? 0));
+  const tip = (answer: string, v: number | null) => escapeHtml(`"${label}" — ${answer}: ${v ?? 0}% of residents`);
   return `
     <div class="re-question">
       <div class="re-label">
@@ -159,10 +161,10 @@ function reBar(label: string, d: ResidentExpDist): string {
         <span class="muted">${total ? `${positive}% positive` : '—'}</span>
       </div>
       <div class="re-bar">
-        <div class="re-seg always" style="width:${seg(d.always)}%"></div>
-        <div class="re-seg most" style="width:${seg(d.most)}%"></div>
-        <div class="re-seg some" style="width:${seg(d.some)}%"></div>
-        <div class="re-seg never" style="width:${seg(d.never)}%"></div>
+        <div class="re-seg always" style="width:${seg(d.always)}%" data-tip="${tip('Always', d.always)}" aria-label="${tip('Always', d.always)}"></div>
+        <div class="re-seg most" style="width:${seg(d.most)}%" data-tip="${tip('Most of the time', d.most)}" aria-label="${tip('Most of the time', d.most)}"></div>
+        <div class="re-seg some" style="width:${seg(d.some)}%" data-tip="${tip('Some of the time', d.some)}" aria-label="${tip('Some of the time', d.some)}"></div>
+        <div class="re-seg never" style="width:${seg(d.never)}%" data-tip="${tip('Never', d.never)}" aria-label="${tip('Never', d.never)}"></div>
       </div>
     </div>`;
 }
@@ -179,11 +181,14 @@ function careMinuteCard(label: string, target: number | null, actual: number | n
   const gap = actual - target;
   const fillPct = Math.min(100, (actual / target) * 100);
   const cls = gap < 0 ? 'under' : 'over';
+  const tip = escapeHtml(
+    `${label}: ${formatNumber(actual, 1)} of ${formatNumber(target, 1)} target min/day (${gap >= 0 ? '+' : ''}${formatNumber(gap, 1)}, ${formatNumber((actual / target) * 100, 0)}% of target)`,
+  );
   return `
     <div class="cm-card">
       <div class="cm-title">${escapeHtml(label)} — actual</div>
       <div class="cm-value">${formatNumber(actual, 1)}<span class="muted" style="font-size: var(--font-size-sm); font-weight: 400;"> min/day</span></div>
-      <div class="cm-bar"><div class="cm-bar-fill ${cls}" style="width:${fillPct}%"></div></div>
+      <div class="cm-bar" data-tip="${tip}" aria-label="${tip}"><div class="cm-bar-fill ${cls}" style="width:${fillPct}%"></div></div>
       <div class="cm-gap ${cls}">${gap >= 0 ? '+' : ''}${formatNumber(gap, 1)} vs ${formatNumber(target, 1)} target</div>
     </div>`;
 }

@@ -22,7 +22,8 @@ export function renderStates(root: HTMLElement, state: AppState): void {
                 .map((r) => {
                   const v = a.dist_overall[r] ?? 0;
                   const h = v === 0 ? 0 : Math.max(2, (v / max) * 100);
-                  return `<div class="histogram-bar" data-r="${r}" style="height:${h}%" title="${r}★: ${v} services"></div>`;
+                  const tip = `${st} — ${r}★ overall: ${formatNumber(v)} services`;
+                  return `<div class="histogram-bar" data-r="${r}" style="height:${h}%" data-tip="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}"></div>`;
                 })
                 .join('')}
             </div>

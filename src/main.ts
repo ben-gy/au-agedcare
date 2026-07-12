@@ -3,6 +3,7 @@ import { DEFAULT_FILTERS, loadData, type AppState } from './state.ts';
 import type { Service, ViewId } from './types.ts';
 import { escapeHtml, debounce, STATE_ORDER, uniqueValues } from './utils.ts';
 import { attachGlossaryHandlers, glossaryLink } from './glossaryTooltip.ts';
+import { initTooltip } from './tooltip.ts';
 import { renderDirectory } from './views/directory.ts';
 import { renderMap } from './views/map.ts';
 import { renderLeaderboard } from './views/leaderboard.ts';
@@ -27,6 +28,7 @@ const VIEWS: { id: ViewId; label: string }[] = [
 const root = document.getElementById('app')!;
 
 async function bootstrap() {
+  initTooltip();
   root.innerHTML = skeletonShell();
 
   try {
@@ -109,7 +111,7 @@ function mountShell(state: AppState) {
           ).join('')}
         </nav>
         <div class="header-actions">
-          <button class="icon-btn" id="about-btn" title="About this site" aria-label="About">?</button>
+          <button class="icon-btn" id="about-btn" data-tip="About this site" aria-label="About this site">?</button>
         </div>
       </div>
     </header>
