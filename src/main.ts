@@ -173,7 +173,7 @@ function mountShell(state: AppState) {
     <footer class="site-footer">
       <div class="footer-inner">
         <div>
-          Built by <a href="https://benrichardson.dev/">benrichardson.dev</a> · <a href="https://sites.benrichardson.dev" target="_blank" rel="noopener">more tools &amp; sites</a>
+          Built by <a href="https://benrichardson.dev/">benrichardson.dev</a> · <a href="https://hub.benrichardson.dev" target="_blank" rel="noopener">more tools &amp; sites</a>
         </div>
         <div class="footer-meta">
           <span>Source: Department of Health, Disability and Ageing — Star Ratings ${escapeHtml(state.reportingPeriod)}</span>
