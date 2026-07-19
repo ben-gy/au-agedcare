@@ -1,3 +1,8 @@
+// feedback:begin (managed by hub/scripts/feedback/backfill.mjs)
+import { mountFeedback } from './feedback';
+mountFeedback();
+// feedback:end
+
 import './styles.css';
 import { DEFAULT_FILTERS, loadData, type AppState } from './state.ts';
 import type { Service, ViewId } from './types.ts';
